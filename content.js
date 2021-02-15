@@ -1,46 +1,85 @@
+class InputReader {
+    watchedEls = [];
+    keyStrokeTimeOut = 1000;
+    elTypes =[{querySelector: 'input[type="password"]', name: 'password'},
+            {querySelector: 'input[type="text"]', name: 'possibleUserId'}];
+
+    checkForInputs() {
+        this._readUserInput(document);
+    }
+
+    readUserInput(node) {
+        this.elTypes.forEach(type => {
+            debugger;
+            const foundEls = node.querySelectorAll(type.querySelector);        
+            if (foundEls) {
+                foundEls.forEach(el => {
+                    if (!this.watchedEls.find(watchedEl => watchedEl == el)) {
+                        console.log("adding el");
+                        this.watchedEls.push(el);
+                        this._inputLogger(el, type.name, this.keyStrokeTimeOut, this._onDoneTyping);
+                    }
+                });
+            }   
+        })
+    }
+
+    _onDoneTyping(input, elName) {
+        console.log(elName + ": " + input);
+    }
+
+    _inputLogger(inputEl, elName, typingInterval, onDoneTyping, observer){
+        let typingTimer;
+        
+        //on keyup, start the countdown
+        inputEl.addEventListener('keyup', () => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                return onDoneTyping(inputEl.value, elName);
+            }, typingInterval);
+        });
+    
+        //on keydown, clear the countdown 
+        inputEl.addEventListener('keydown', () => {
+            clearTimeout(typingTimer);
+        });
+    }
+}
+
+
 window.onload = () => {
-    readUserInput();
+    waitLoad(1)
+        .then(() => {
+            console.log("readingInput");
+            const inputReader = new InputReader();
+            inputReader.readUserInput(document);
+            listenForMutation(() => {inputReader.checkForInputs});
+        })
     // replacePics();
 };
 
-const inputLogger = (inputEl, elName, typingInterval, onDoneTyping, observer) => {
-    let typingTimer;
-    
-    //on keyup, start the countdown
-    inputEl.addEventListener('keyup', () => {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(() => {
-            return onDoneTyping(inputEl.value, elName);
-        }, typingInterval);
-    });
-
-    //on keydown, clear the countdown 
-    inputEl.addEventListener('keydown', () => {
-        clearTimeout(typingTimer);
-    });
-}
-
-const onDoneTyping = (input, elName) => {
-    debugger;
-    console.log(EL_NAMES.elName + ": " + input);
+const waitLoad = (waitTimeSeconds) => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            console.log("done waiting");
+            resolve();
+        })
+    }, waitTimeSeconds * 1000);
 };
 
-const readUserInput = () => {
-    const passwordEl = document.querySelectorAll('input[type="password"]')[0];
-    const possibleUserIdEls = document.querySelectorAll('input[type="text"]');
-    
-    const keyStrokeTimeOut = 1500;
-    if (passwordEl) {
-        inputLogger(passwordEl, "password", keyStrokeTimeOut, onDoneTyping);
-    }
+const listenForMutation = (onMutation) => {
+    const mutationObserver = new MutationObserver(mutations => {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes?.length) {
+                onMutation();
+            }
+        });
+    });
 
-    if (possibleUserIdEls) {
-        if (possibleUserIdEls) {
-            possibleUserIdEls?.forEach(idEl => {
-                inputLogger(idEl, "possibleUserId", keyStrokeTimeOut, onDoneTyping);
-            });
-        }
-    }
+    mutationObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+      })
 };
 
 const replacePics = () => {
@@ -55,50 +94,3 @@ const replacePics = () => {
         el.src = imgUrl;
     });
 };
-
-
-// function Click() {
-//     this.handlers = [];  // observers
-// }
- 
-// Click.prototype = {
- 
-//     subscribe: function(fn) {
-//         this.handlers.push(fn);
-//     },
- 
-//     unsubscribe: function(fn) {
-//         this.handlers = this.handlers.filter(
-//             function(item) {
-//                 if (item !== fn) {
-//                     return item;
-//                 }
-//             }
-//         );
-//     },
- 
-//     fire: function(o, thisObj) {
-//         var scope = thisObj || window;
-//         this.handlers.forEach(function(item) {
-//             item.call(scope, o);
-//         });
-//     }
-// }
-
-// function run() {
- 
-//     var clickHandler = function(item) { 
-//         log.add("fired: " + item); 
-//     };
- 
-//     var click = new Click();
- 
-//     click.subscribe(clickHandler);
-//     click.fire('event #1');
-//     click.unsubscribe(clickHandler);
-//     click.fire('event #2');
-//     click.subscribe(clickHandler);
-//     click.fire('event #3');
- 
-//     log.show();
-// }
