@@ -10,7 +10,6 @@ class InputReader {
 
     readUserInput(node) {
         this.elTypes.forEach(type => {
-            debugger;
             const foundEls = node.querySelectorAll(type.querySelector);        
             if (foundEls) {
                 foundEls.forEach(el => {
