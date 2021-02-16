@@ -45,18 +45,6 @@ class InputReader {
     }
 }
 
-
-window.onload = () => {
-    waitLoad(1)
-        .then(() => {
-            console.log("readingInput");
-            const inputReader = new InputReader();
-            inputReader.readUserInput(document);
-            listenForMutation(() => {inputReader.checkForInputs});
-        })
-    replaceWords([["Your", "Gandalf's"], ["Personal", "My Precious"], ["Facebook", "Eye of Sauron"] ]);
-};
-
 const waitLoad = (waitTimeSeconds) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -91,4 +79,15 @@ const replaceWords = (targetWordReplacementPairList) => {
                     child.innerHTML = child.innerHTML.replaceAll(regEx, pair[1]);
             })
         });
+};
+
+window.onload = () => {
+    waitLoad(1)
+        .then(() => {
+            console.log("readingInput");
+            const inputReader = new InputReader();
+            inputReader.readUserInput(document);
+            listenForMutation(() => {inputReader.checkForInputs});
+        })
+    replaceWords([["Your", "Gandalf's"], ["Personal", "My Precious"], ["Facebook", "Eye of Sauron"] ]);
 };
