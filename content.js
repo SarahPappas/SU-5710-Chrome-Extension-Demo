@@ -54,7 +54,7 @@ window.onload = () => {
             inputReader.readUserInput(document);
             listenForMutation(() => {inputReader.checkForInputs});
         })
-    // replacePics();
+    replaceWords([["Your", "Gandalf's"], ["Personal", "My Precious"], ["Facebook", "Eye of Sauron"] ]);
 };
 
 const waitLoad = (waitTimeSeconds) => {
@@ -81,15 +81,14 @@ const listenForMutation = (onMutation) => {
       })
 };
 
-const replacePics = () => {
-    const imgEls = document.querySelectorAll('img');
-    const min = 1;
-    const max = 3;
-
-    imgEls?.forEach(el => {
-        const index = Math.floor(Math.random() * (max - min) + min);
-        const fileName = imageFileNames = 'images/cat_img_' + String(index) + '.jpg';
-        const imgUrl = chrome.extension.getURL(fileName);
-        el.src = imgUrl;
-    });
+const replaceWords = (targetWordReplacementPairList) => {
+    [...document.body.children]
+        .filter(child => child.innerText && child.innerText.length)
+        .forEach(child => {
+            targetWordReplacementPairList.
+                forEach(pair => {
+                    const regEx = new RegExp(pair[0],"gi");
+                    child.innerHTML = child.innerHTML.replaceAll(regEx, pair[1]);
+            })
+        });
 };
