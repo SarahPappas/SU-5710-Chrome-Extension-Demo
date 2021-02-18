@@ -2,7 +2,7 @@
     "name": "Getting Started Example",
     "version": "1.0",
     "description": "Build an Extension!",
-    "permissions": ["declarativeContent", "storage", "activeTab", "tabs", "<all_urls>"],
+    "permissions": ["declarativeContent", "storage", "activeTab", "tabs", "<all_urls>", "http://*/*"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
