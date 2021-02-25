@@ -1,5 +1,5 @@
 {
-    "name": "Getting Started Example",
+    "name": "LOTR your Browsing",
     "version": "1.0",
     "description": "Build an Extension!",
     "permissions": ["declarativeContent", "storage", "activeTab", "tabs", "<all_urls>", "http://*/*"],
